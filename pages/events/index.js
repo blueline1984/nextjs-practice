@@ -1,9 +1,9 @@
 import { useRouter } from "next/router";
 import Link from "next/link";
-import events from "../../data/data";
+import { getAllEvents } from "../../dummy-data";
 
 const EventsPage = () => {
-  const router = useRouter();
+  const events = getAllEvents();
 
   return (
     <div>

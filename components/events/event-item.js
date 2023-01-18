@@ -19,23 +19,23 @@ const EventItem = ({ title, image, data, location, id }) => {
       <div className={classes.content}>
         <div className={classes.summary}>
           <h2>{title}</h2>
+          <div className={classes.date}>
+            <DateIcon />
+            <time>{humanReadableDate}</time>
+          </div>
+          <div className={classes.address}>
+            <AddressIcon />
+            <address>{formattedAddress}</address>
+          </div>
         </div>
-        <div className={classes.date}>
-          <DateIcon />
-          <time>{humanReadableDate}</time>
+        <div className={classes.actions}>
+          <Button link={exploreLink}>
+            <span>Explore Event</span>
+            <span className={classes.icon}>
+              <ArrowRightIcon />
+            </span>
+          </Button>
         </div>
-        <div className={classes.address}>
-          <AddressIcon />
-          <address>{formattedAddress}</address>
-        </div>
-      </div>
-      <div className={classes.actions}>
-        <Button link={exploreLink}>
-          <span>Explore Event</span>
-          <span className={classes.icon}>
-            <ArrowRightIcon />
-          </span>
-        </Button>
       </div>
     </li>
   );

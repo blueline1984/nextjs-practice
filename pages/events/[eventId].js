@@ -1,38 +1,70 @@
-import { useRouter } from "next/router";
-import { getEventById } from "../../dummy-data";
 import EventSummary from "../../components/event-detail/event-summary";
 import EventLogistics from "../../components/event-detail/event-logistics";
 import EventContent from "../../components/event-detail/event-content";
-import ErrorAlert from "../../components/ui/error-alert";
 
-const EventDetailPage = () => {
-  const router = useRouter();
-
-  const eventId = router.query.eventId;
-  const event = getEventById(eventId);
-
-  if (!event) {
-    return (
-      <ErrorAlert>
-        <p>No event found!</p>
-      </ErrorAlert>
-    );
-  }
-
+const EventDetailPage = ({ filteredEvent }) => {
   return (
     <>
-      <EventSummary title={event.title} />
+      <EventSummary title={filteredEvent.title} />
       <EventLogistics
-        date={event.date}
-        address={event.location}
-        image={event.image}
-        imageAlt={event.title}
+        date={filteredEvent.date}
+        address={filteredEvent.location}
+        image={filteredEvent.image}
+        imageAlt={filteredEvent.title}
       />
       <EventContent>
-        <p>{event.description}</p>
+        <p>{filteredEvent.description}</p>
       </EventContent>
     </>
   );
 };
 
 export default EventDetailPage;
+
+async function getData() {
+  const response = await fetch(
+    `https://nextjs-course-5c629-default-rtdb.firebaseio.com/events.json`
+  );
+
+  const data = response.json();
+
+  return data;
+}
+
+export async function getStaticProps(context) {
+  const { params } = context;
+  const eventId = params.eventId;
+
+  const data = await getData();
+  let filteredEvent = {};
+
+  for (const key in data) {
+    if (key === eventId) {
+      filteredEvent = { ...data[key] };
+    }
+  }
+
+  if (!filteredEvent) {
+    return { notFound: true };
+  }
+
+  return {
+    props: { filteredEvent },
+  };
+}
+
+export async function getStaticPaths() {
+  const data = await getData();
+  const ids = [];
+
+  for (const key in data) {
+    ids.push(key);
+  }
+
+  const pathsWithParams = ids.map((id) => ({ params: { eventId: id } }));
+
+  return {
+    paths: pathsWithParams,
+    fallback: true,
+  };
+}

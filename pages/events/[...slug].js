@@ -60,3 +60,22 @@ const FilteredEventsPage = () => {
 };
 
 export default FilteredEventsPage;
+
+export async function getStaticProps(context) {
+  const { params } = context;
+  const slug = params.slug;
+
+  const filteredYear = filterData[0];
+  const filteredMonth = filterData[1];
+
+  const response = await fetch(
+    `https://nextjs-course-5c629-default-rtdb.firebaseio.com/events`
+  );
+  const data = response.json();
+
+  return {
+    props: {
+      filteredEvents: "test",
+    },
+  };
+}

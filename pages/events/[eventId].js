@@ -1,9 +1,17 @@
 import EventSummary from "../../components/event-detail/event-summary";
 import EventLogistics from "../../components/event-detail/event-logistics";
 import EventContent from "../../components/event-detail/event-content";
-import { getEventById, getAllEvents } from "../../helper/api-utils";
+import { getEventById, getFeaturedEvents } from "../../helper/api-utils";
+import ErrorAlert from "../../components/ui/error-alert";
 
 const EventDetailPage = ({ selectedEvent }) => {
+  if (!selectedEvent) {
+    return (
+      <div className="center">
+        <p>Loading...</p>
+      </div>
+    );
+  }
   return (
     <>
       <EventSummary title={selectedEvent.title} />
@@ -29,61 +37,16 @@ export async function getStaticProps(context) {
     props: {
       selectedEvent,
     },
+    revalidate: 30,
   };
 }
 
 export async function getStaticPaths() {
-  const events = await getAllEvents();
+  const events = await getFeaturedEvents();
+
   const paths = events.map((event) => ({ params: { eventId: event.id } }));
   return {
     paths: paths,
-    fallback: false,
+    fallback: "blocking",
   };
 }
-
-// async function getData() {
-//   const response = await fetch(
-//     `https://nextjs-course-5c629-default-rtdb.firebaseio.com/events.json`
-//   );
-
-//   const data = response.json();
-
-//   return data;
-// }
-
-// export async function getStaticProps(context) {
-//   const eventId = context.params.eventId;
-
-//   const data = await getData();
-//   let filteredEvent = {};
-
-//   for (const key in data) {
-//     if (key === eventId) {
-//       filteredEvent = { ...data[key] };
-//     }
-//   }
-
-//   if (!filteredEvent) {
-//     return { notFound: true };
-//   }
-
-//   return {
-//     props: { filteredEvent },
-//   };
-// }
-
-// export async function getStaticPaths() {
-//   const data = await getData();
-//   const ids = [];
-
-//   for (const key in data) {
-//     ids.push(key);
-//   }
-
-//   const pathsWithParams = ids.map((id) => ({ params: { eventId: id } }));
-
-//   return {
-//     paths: pathsWithParams,
-//     fallback: true,
-//   };
-// }

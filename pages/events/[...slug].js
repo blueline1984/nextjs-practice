@@ -1,3 +1,4 @@
+import Head from "next/head";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { getFilteredEvents } from "../../helper/api-utils";
@@ -17,8 +18,6 @@ const FilteredEventsPage = ({ events, hasError, date }) => {
     "https://nextjs-course-5c629-default-rtdb.firebaseio.com/events.json",
     (url) => fetch(url).then((res) => res.json())
   );
-
-  console.log("data", data);
 
   useEffect(() => {
     if (data) {
@@ -86,6 +85,13 @@ const FilteredEventsPage = ({ events, hasError, date }) => {
 
   return (
     <>
+      <Head>
+        <title>{selectedEvent.title}</title>
+        <meta
+          name="description"
+          content={`All events for ${numMonth}/${numYear}`}
+        />
+      </Head>
       <ResultsTitle date={dates} />
       <EventList items={filteredEvents} />
     </>
